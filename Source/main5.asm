@@ -5,7 +5,7 @@ INCLUDE MACROS5.INC
 ;************DATA************
 EXIT DB 0 
 
-; Players Data
+; Players Data 初始化玩家数据
 
 INITIAL_P1_X DW 50
 INITIAL_P1_Y DW 38
@@ -26,7 +26,7 @@ PLAYER2_STAND  DB ?
 STEPLENGTH    DB 15
 
 
-;added by sherif
+;added by Zhao Xuanhao 
 ARROW1X DW 0d
 ARROW1Y DW 0d
 
@@ -39,7 +39,7 @@ ARROW2_STATUS DW 0D
 CLEAN_ARROWX DW 0D
 CLEAN_ARROWY DW 0D
 
-;START PHOTO DATA
+;START PHOTO DATA 创建开始界面数据
     StartWidth EQU 301
     StartHeight EQU 200
     StartFilename DB 'start.bin', 0
@@ -88,7 +88,7 @@ CONGRATULATIONS DB 'Congratulations ', '$'
 SCOREIS DB 'The Score is ', '$'
 ENDL DB 0ah, 0dh
 
-;MAP DATA
+;MAP DATA 创建地图数据
 
 ;                 MAP SHAPE
 ;      1---------          2---------
@@ -111,7 +111,7 @@ STEP45_Y     DB 170
 
 STEPBEGINY    DW 90D
 STEPINTERVALY DW 40D    
-;CHARS AND ARROWS
+;CHARS AND ARROWS DATA 创建字符和攻击炮弹数据
 
 RED EQU 04h
 WHITE EQU 0fh
@@ -300,7 +300,7 @@ fireupx dw ?
 fireupy dw ?
 fireDirection db ? 
 
-;HEALTH AND SCORE BARS and game
+;HEALTH AND SCORE BARS and game 血条和分数
 GameLevel db 1       
 
 Health1 dw 5
@@ -327,7 +327,7 @@ X2 DW '0'
 Y1 DW '0'
 Y2 DW '0'
 
-;MOVING PLAYERS
+;MOVING PLAYERS 
 DX1 DW 0 
 DY1 DW 0
 DX2 DW 0
@@ -346,7 +346,7 @@ powerup1 db BGC,BGC,BGC,BLACK,BLACK,BLACK,BGC,BLACK,BLACK,BLACK,BGC,BGC
          db BGC,BGC,BGC,BGC,BGC,BLACK,RED,BLACK,BGC,BGC,BGC,BGC
          db BGC,BGC,BGC,BGC,BGC,BGC,BLACK,BGC,BGC,BGC,BGC,BGC
          db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
-         
+;爱心         
 
 powerup2 db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
          db BGC,BGC,BGC,BGC,BLACK,BLACK,BLACK,BLACK,BLACK,BGC,BGC,BGC
@@ -360,7 +360,7 @@ powerup2 db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
          db BGC,BGC,BLACK,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,BLACK,BGC
          db BGC,BGC,BGC,BLACK,YELLOW,YELLOW,YELLOW,YELLOW,YELLOW,BLACK,BGC,BGC
          db BGC,BGC,BGC,BGC,BLACK,BLACK,BLACK,BLACK,BLACK,BGC,BGC,BGC
-
+;双倍炮弹
 
 powerup3 db BGC,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BGC
          db BLACK,Gray,Gray,Gray,white,white,white,Gray,BLACK,Gray,Gray,BLACK
@@ -374,7 +374,7 @@ powerup3 db BGC,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BGC
          db BGC,BGC,BLACK,Gray,Gray,Gray,Gray,Gray,Gray,BLACK,BGC,BGC
          db BGC,BGC,BGC,BLACK,Gray,Gray,Gray,Gray,BLACK,BGC,BGC,BGC
          db BGC,BGC,BGC,BGC,BGC,BLACK,BLACK,BGC,BGC,BGC,BGC,BGC
-
+;盾
 
 clearpowerup db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
              db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
@@ -388,7 +388,7 @@ clearpowerup db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
              db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
              db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC
              db BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC,BGC 
-
+;清除道具
 powerup1x dw ?
 powerup1y dw ?
 powerup2x dw ?
@@ -421,15 +421,15 @@ main proc far
     mov ax,@DATA
     mov ds,ax
 
-    ;GRAPHICS MODE
+    ;GRAPHICS MODE 
     MOV AH, 0
     MOV AL, 13h
     INT 10h
     
-    ;Draw Start Photo
+    ;Draw Start Photo 开始界面
     STARTING_PROCESS
         
-    GAME_BEGIN:      ;GAME MENU SCREEN   
+    GAME_BEGIN:      ;GAME MENU SCREEN   菜单
         ;GRAPHICS MODE
         MOV AH, 0
         MOV AL, 13H
@@ -439,14 +439,14 @@ main proc far
         
         INITIALZING_DATA
 
-        ;DRAW STATIC FRAMES
+        ;DRAW STATIC FRAMES 框架
         DRAW_STATIC
         CALL DRAW_fire_frame
       
         INFLOOP:
-            MOV BL, STEPLENGTH  ;length of motion
+            MOV BL, STEPLENGTH  ;length of motion 移动长度
 
-            ; Check if there is a winner
+            ; Check if there is a winner 检查是否有赢家
             CALL CHECK_HEALTH
             CMP SCORE1, 3
             JNE COMPARESCORE2
@@ -462,7 +462,7 @@ main proc far
                 PUSH BX
                 PUSH CX
                 
-                ;STEP OF THE ARROW
+                ;STEP OF THE ARROW  炮弹的步长
                 MOV CX, 3
                 MOV_ARROW_BY_3:
                     PUSH CX
@@ -473,12 +473,12 @@ main proc far
                 POP CX
                 POP BX
 
-                ;CHECK POWER-UPS COLLISIONS
+                ;CHECK POWER-UPS COLLISIONS 检查道具碰撞
                 CHECK_POWER_UP_COLLISION
 
                 CHANGE_PLAYER_POSITIONS
 
-                ;CHECK PLAYERS BOUNDARIES 
+                ;CHECK PLAYERS BOUNDARIES 检查角色模型边界
                 MOV tempW,1
                 CALL Check_Positions_Boundaries
                 
@@ -494,7 +494,7 @@ main proc far
 
                 CMP BL, 0
                 JNZ CONTINUE_MOVING
-                ;JUST FOR MINIMIZING THE JUMP
+                ;JUST FOR MINIMIZING THE JUMP 
                 SHORT_MOVINGLOOP_JMP:
                 JMP MOVINGLOOP
                 CONTINUE_MOVING:
@@ -506,7 +506,7 @@ main proc far
 
                 DRAW_POWERUPS_MAC
 
-                DEC BL ;DEC THE COUNTER OF THE JUMP PIXELS OF MOTION
+                DEC BL ;DEC THE COUNTER OF THE JUMP PIXELS OF MOTION 跳跃时角色像素减少1
             JNZ SHORT_MOVINGLOOP_JMP 
 
             MOV DX1, 0
@@ -516,14 +516,14 @@ main proc far
             MOV DY2, 2
 
 
-            ;RANDOMIZATION OF POWER-UPS POS
+            ;RANDOMIZATION OF POWER-UPS POS 随机化道具位置
             RANDOMIZIONG_OF_POWERUPS        
 
             POP SI
             POP AX
                 ;END CHECK STATUS 
 
-            PUSH AX;FOR KEEPING IT IS VALUE ADDED BY SHERIF
+            PUSH AX;FOR KEEPING IT IS VALUE ADDED BY Li Dongyan 
             PUSH BX
             CALL KEY_PRESSED
             POP BX
@@ -539,7 +539,7 @@ main proc far
 main ENDP 
 
 Check_Positions_Boundaries proc near
-    ;PLAYER ONE CHECKS TO BOUNDIRES
+    ;PLAYER ONE CHECKS TO BOUNDIRES 角色1检查边界
         ;FRAME CHECKS
         PUSH AX
         PUSH BX
@@ -624,7 +624,7 @@ Check_Positions_Boundaries proc near
         NODOWN1:
 
 
-        ;PLAYERS COLLASIONS
+        ;PLAYERS COLLASIONS 检查角色碰撞
         MOV AX, PLAYER1Y
         MOV BX, PLAYER2Y
 
@@ -639,13 +639,13 @@ Check_Positions_Boundaries proc near
         SUB_AB_Y:
 
         CMP AX, 18
-        JG NO_PLAYERS_COLLAIONS ;NOT AT THE SAME LVL (Y-AXIS)
+        JG NO_PLAYERS_COLLAIONS ;NOT AT THE SAME LVL (Y-AXIS) 不在同一水平线上
             
-            ;LET'S CHECK THE X-AXIS
+            ;LET'S CHECK THE X-AXIS 检查垂直线上
             MOV AX, PLAYER1X
             MOV BX, PLAYER2X
             
-            ;ABS (AX - BX)
+            ;ABS (AX - BX) 绝对值
             CMP AX, BX
             JNG SUB_BA_X
                 SUB AX, BX
@@ -704,8 +704,8 @@ CHECK_HEALTH PROC NEAR
     RET
 CHECK_HEALTH ENDP
 
-CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
-     ;CHECK IF THE ARROW HITS THE WALL THEN CLEAR IT 
+CHECK_ARROWS PROC NEAR ;ADDED BY Chen Yongbin
+     ;CHECK IF THE ARROW HITS THE WALL THEN CLEAR IT 炮弹打到墙上消失
         PUSH AX
         PUSH BX
         PUSH CX
@@ -721,7 +721,7 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
         ARR:
         CMP AX, 10
         JGE NOTLEFT
-        ;CHECK IF ANY ARROW HITS LEFT WALL
+        ;CHECK IF ANY ARROW HITS LEFT WALL 检查炮弹是否打到左墙
         CMP tempW, 1
         JE A1
             MOV ARROW2X, 11
@@ -741,7 +741,7 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
             JMP HIT_PLAYER_CHECK
         NOTLEFT:
 
-        ;CHECK IF ANY ARROW HITS RIGHT WALL
+        ;CHECK IF ANY ARROW HITS RIGHT WALL 检查炮弹是否打到右墙
         CMP AX, 299
         JLE NOTRIGHT
         CMP tempW,1
@@ -763,8 +763,8 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
             JMP HIT_PLAYER_CHECK
         NOTRIGHT:
 
-        ;IF THE ARROW HITS THE OTHER PLAYER 
-        ;HIS HEALTH DECREASED BY 1 , THE SCORE OF THE OTHER PLAYER IS INCREASED BY 1 , THE PLAYER IS HITTED IS SHIFTED 10 PIXLES BACK,AND THE ARROW WILL BE CLEARD
+        ;IF THE ARROW HITS THE OTHER PLAYER  检查炮弹是否打到对方
+        ;如果打到对方，对方血量减一，对方分数加一，被打到的角色向后移动10像素，炮弹消失
         HIT_PLAYER_CHECK:
             ;PLAYER1
                 MOV AX, ARROW2X
@@ -772,13 +772,13 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 SUB AX, PLAYER1X
                 ADD AX, 12
 
-                ;CHECK ARROW2 COLLASION-X (0 <= X <= 32)
+                ;CHECK ARROW2 COLLASION-X (0 <= X <= 32) 坐标检查
                 CMP AX, 4
                 JL HIT_PLAYER2
                 CMP AX, 30
                 JG HIT_PLAYER2
                 
-                ;CHECK ARROW2 COLLASIONS-Y
+                ;CHECK ARROW2 COLLASIONS-Y 坐标检查
                 MOV AX, BX
                 SUB AX, 14   
                 ADD BX, 18
@@ -787,10 +787,10 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 CMP AX,ARROW2Y
                 JGE HIT_PLAYER2
                 
-                ;CHECK SHIELD EFFECT1
+                ;CHECK SHIELD EFFECT1 检查是否有护盾
                 CMP SHIELD1, 1
                 JE ACTIVATE_SHIELD1
-                ;CHECK DOUBLE_POWER EFFECT_2
+                ;CHECK DOUBLE_POWER EFFECT_2 检查是否有双倍攻击
                 CMP DOUBLE_POWER2, 0
                 JE NO_DOUBLING2
                     DEC HEALTH1
@@ -813,8 +813,8 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 CALL DRAW_ARROWS
                 MOV ARROW2X,0
                 MOV ARROW2Y,0
-                ;COLLISION 'TO BE DONE'
-                MOV DX1,2 ;GO RIGHT
+                ;COLLISION 'TO BE DONE'  碰撞效果
+                MOV DX1,2 ;GO RIGHT  向右移动
 
                 MOV AX, PLAYER1X
                 CMP AX, PLAYER2X
@@ -829,13 +829,13 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 SUB AX, PLAYER2X
                 ADD AX, 12
 
-                ;CHECK ARROW1 COLLASION-X (0 <= X <= 32)
+                ;CHECK ARROW1 COLLASION-X (0 <= X <= 32)  坐标检查
                 CMP AX, 4
                 JL HIT_EACH_OTHER_CHECK
                 CMP AX, 30
                 JG HIT_EACH_OTHER_CHECK
                 
-                ;CHECK ARROW1 COLLASIONS-Y
+                ;CHECK ARROW1 COLLASIONS-Y  坐标检查
                 MOV AX, BX  
                 SUB AX, 14 
                 ADD BX, 18
@@ -844,10 +844,10 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 CMP AX,ARROW1Y
                 JGE HIT_EACH_OTHER_CHECK
 
-                ;CHECK SHIELD EFFECT2
+                ;CHECK SHIELD EFFECT2  检查是否有护盾
                 CMP SHIELD2, 1
                 JE ACTIVATE_SHIELD2
-                ;CHECK DOUBLE_POWER EFFECT_1
+                ;CHECK DOUBLE_POWER EFFECT_1  检查是否有双倍攻击
                 CMP DOUBLE_POWER1, 0
                 JE NO_DOUBLING1
                     DEC HEALTH2
@@ -871,7 +871,7 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 CALL DRAW_ARROWS
                 MOV ARROW1X,0
                 MOV ARROW1Y,0
-                ;COLLISION 'TO BE DONE'
+                ;COLLISION 'TO BE DONE'  碰撞效果
                 MOV DX2, 2 ;GO RIGHT
 
                 MOV AX, PLAYER2X
@@ -881,8 +881,8 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
                 GO_LEFT_NOT_RIGHT2:
 
 
-        ;IF THE ARROWS HIT EACH OTHER BOTH OF THEM WILL FADE OUT
-         HIT_EACH_OTHER_CHECK:
+        ;IF THE ARROWS HIT EACH OTHER BOTH OF THEM WILL FADE OUT 炮弹抵消
+        ;  HIT_EACH_OTHER_CHECK:
         ;     MOV AX,ARROW1X
         ;     MOV BX,ARROW2X
         ;     MOV CX,ARROW1Y
@@ -899,12 +899,16 @@ CHECK_ARROWS PROC NEAR ;ADDED BY SHERIF
         ;     MOV CLEAN_ARROWY,CX
         ;     MOV TEMPB,3
         ;     CALL DRAW_ARROWS
+        ;     MOV ARROW1X,0
+        ;     MOV ARROW1Y,0
         ;     ;CLEAR ARROW2
         ;     MOV ARROW2_STATUS,0
         ;     MOV CLEAN_ARROWX,BX
         ;     MOV CLEAN_ARROWY,DX
         ;     MOV TEMPB,3
         ;     CALL DRAW_ARROWS
+        ;     MOV ARROW2X,0
+        ;     MOV ARROW2Y,0
 
 
         
@@ -1171,13 +1175,13 @@ DRAW_SCORE_Health_Bar proc near
     PUSH BX
     PUSH CX
     PUSH DX
-    ;moving the cursor
+    ;moving the cursor 移动光标
         mov dl,0ah;column
         mov dh,1h;row
         mov bh,0;page number Alwayes 0 'draw in the same page'
         mov ah,02h;int 10h/2h
         int 10h
-    ;Draw the Score of player 1 the score of player 2
+    ;Draw the Score of player 1 the score of player 2 玩家1的分数 玩家2的分数
         ;score of player 1
             mov bl,4;color
             mov al,Score1
@@ -1194,7 +1198,7 @@ DRAW_SCORE_Health_Bar proc near
                 add al,'0'
                 mov ah,0eh
                 int 10h
-    ;Draw the bar of health 
+    ;Draw the bar of health 血条
         mov al,02h
         mov ah,0ch
         mov cx,17h
@@ -1206,7 +1210,7 @@ DRAW_SCORE_Health_Bar proc near
         PL1:
         ;5*5 square with white frame and green body according to the number of health and the other are empty
         mov tempw,cx
-        ;the health of the current PLayer in Health
+        ;the health of the current PLayer in Health 
         mov HEALTH,dx
         mov cx,5
         DrawHealth:
@@ -1216,7 +1220,7 @@ DRAW_SCORE_Health_Bar proc near
                 mov di,6h
                 mov dx,14h       
                 Hieg:
-                    ;to draw empty bars if there
+                    ;to draw empty bars if there 
                     xchg cx,tempw
                     cmp cx,HEALTH
                     jg EmptyBar
@@ -1224,7 +1228,7 @@ DRAW_SCORE_Health_Bar proc near
                     jmp a
                     EmptyBar:
                     mov al,04h
-                    ;to check for white edges
+                    ;to check for white edges  
                     a:xchg tempw,cx
                     cmp di,6h
                     jne g1
@@ -1239,7 +1243,7 @@ DRAW_SCORE_Health_Bar proc near
                     jne green
                     mov al,0fh
                     green:
-                    ;temp variable to be able to move values in it        
+                    ;temp variable to be able to move values in it 血条可变
                     int 10h
                     inc dx
                     dec di
@@ -1258,7 +1262,7 @@ DRAW_SCORE_Health_Bar ENDP
 
 KEY_PRESSED proc near
     
-    ;THINK IN SEPERATE THE PLAYERS KEYS
+    ;THINK IN SEPERATE THE PLAYERS KEYS 
     CALL STANDING_CHECK
                     
     MOV DI, 4
@@ -1321,6 +1325,7 @@ KEY_ACTIONS PROC NEAR
         CMP AL, 47H           ;CAPITAL G
         JE PLAYER1_HIT
     RET
+    ;操作按键不区分大小写
 
 
     ;PLAYER 2 ACTIONS
@@ -1340,7 +1345,7 @@ KEY_ACTIONS PROC NEAR
             RET
 
         PLAYER2_HIT:    ;ADDED BY SHERIF
-            ;CHECK IF THERE IS ALREADY AN ARROW FIRED
+            ;CHECK IF THERE IS ALREADY AN ARROW FIRED  ;检查是否已经有炮弹发射
             CMP ARROW2_STATUS, 1
             JE END_KEY_ACTIONS_SHORT
             
@@ -1377,7 +1382,7 @@ KEY_ACTIONS PROC NEAR
 KEY_ACTIONS ENDP
 
 DETERMINE_ARROW_DIR1 PROC NEAR
-    ;CHECK COLLISION OF PLAYERS IN Y-AXIS
+    ;CHECK COLLISION OF PLAYERS IN Y-AXIS  检查玩家在Y轴上的碰撞
     MOV AX, PLAYER1Y
     SUB AX, PLAYER2Y
     ADD AX, 20
@@ -1399,7 +1404,7 @@ DETERMINE_ARROW_DIR1 PROC NEAR
         SUB AX, BX
     SUB_AB_X_KEY4:
     
-    ;CHECK IF THE TWO PLAYERS ARE TOO CLOSE SO DONT FIRE OR PLAYER 1 CROSSES PLAYER2
+    ;CHECK IF THE TWO PLAYERS ARE TOO CLOSE SO DONT FIRE OR PLAYER 1 CROSSES PLAYER2  检查两个玩家是否太近，所以不要发射或玩家1穿过玩家2
     CMP AX , 40
     JL END_ARROW_DIR1
 
@@ -1411,7 +1416,7 @@ DETERMINE_ARROW_DIR1 PROC NEAR
         MOV ARROW2X,AX
         SUB ARROW2X,12
         
-        ;CORRECT ARROW DIRECTION
+        ;CORRECT ARROW DIRECTION  纠正炮弹方向
         CMP AX, PLAYER1X
         JG RIGHT_ARROW_DIR
             ADD ARROW2X, 24
@@ -1445,7 +1450,7 @@ DETERMINE_ARROW_DIR2 PROC NEAR
         XCHG AX, BX
         SUB AX, BX
     SUB_AB_X_KEY2:
-    ;CHECK IF THE TWO PLAYERS ARE TOO CLOSE SO DONT FIRE OR PLAYER 1 CROSSES PLAYER2
+    ;CHECK IF THE TWO PLAYERS ARE TOO CLOSE SO DONT FIRE OR PLAYER 1 CROSSES PLAYER2 
     
     
     CMP AX , 40
@@ -1474,7 +1479,7 @@ DETERMINE_ARROW_DIR2 ENDP
 
 STANDING_CHECK PROC NEAR 
 
-    ;PLAYER 1 STANDING
+    ;PLAYER 1 STANDING 检测是否能站在base上
     MOV CX, PLAYER1X
 
     CMP CX, PLAYER1X
@@ -1693,7 +1698,7 @@ DRAW_POWERUPS PROC near
 DRAW_POWERUPS endp
 CHECK_POWERUP_COLLISION proc near
 
-    ;CHECK IDENTITY OF TEMP2 & POWER-UP STATUS
+    ;CHECK IDENTITY OF TEMP2 & POWER-UP STATUS 检测血量和道具状态
     CMP POWERUP1STATUS, 1
     JNE CHECK_POWER2_STATE
     CMP TEMPW, 1
@@ -1715,7 +1720,7 @@ CHECK_POWERUP_COLLISION proc near
 
     CHECK_POWER2_STATE3:
 
-    ;IF NO POWER-UPS EXIST
+    ;IF NO POWER-UPS EXIST 
     RET
 
     BEGIN_POWERUP_COLLISION:
@@ -1725,7 +1730,7 @@ CHECK_POWERUP_COLLISION proc near
 
     MOV AX, PLAYER1X
     MOV BX, PLAYER1Y
-    ;CHECK X-COORDINATE OF POWER UP
+    ;CHECK X-COORDINATE OF POWER UP  检测道具的X坐标
     CMP tempb, 1 
     JNE PLAYER2_POWERUP_CHECK
         MOV AX, PLAYER2X
@@ -1757,7 +1762,7 @@ CHECK_POWERUP_COLLISION proc near
 
     ADD AX, 20
 
-    ;X CO-ORDINATE CHECK 
+    ;X CO-ORDINATE CHECK  
     CMP AX, 0
     JGE CHECK_POWERUP_ENDX
         POP BX
@@ -1772,7 +1777,7 @@ CHECK_POWERUP_COLLISION proc near
 
     CHECK_POWERUP_BEGY:
    
-    ;CHECK Y-COORDINATE OF POWER UP
+    ;CHECK Y-COORDINATE OF POWER UP  检测道具的Y坐标
     ADD BX, 12
     CMP BX, 0
     JGE CHECK_POWERUP_ENDY
@@ -1788,7 +1793,7 @@ CHECK_POWERUP_COLLISION proc near
         RET
 
     CHECK_POWERUP_BEG_:
-        ;just for cleaning the power-up
+        ;just for cleaning the power-up  清除道具
         CMP TEMPW, 1
         JNE NOT_POWERUP1_1
             MOV AX,powerup1x
@@ -1815,7 +1820,7 @@ CHECK_POWERUP_COLLISION proc near
         MOV CLEARPOWERUPX, AX
         MOV CLEARPOWERUPY, BX
 
-        ;FUNCTIONLTIES OF POWER-UPS
+        ;FUNCTIONLTIES OF POWER-UPS  功能
         CMP TEMPW, 1
         JNE CHECK_DOUBLE_POWER
             CMP tempb, 2
